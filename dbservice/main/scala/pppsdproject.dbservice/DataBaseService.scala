@@ -30,4 +30,10 @@ trait DataBaseService {
 
   def getTasksByList(listName: String, boardName: String): Seq[TaskDB]
 
+  //нужно дополнительно:
+
+  def getTaskById (taskId: Int): TaskDB
+
+  def moveTask (taskId: Int, listName: String): Unit
+
 }
