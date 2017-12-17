@@ -28,5 +28,4 @@ trait DataBaseService {
 
   def getListsByBoard(boardName: String): Seq[ListDB]
 
-
 }
