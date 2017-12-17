@@ -13,12 +13,16 @@ trait WebProtocol extends SprayJsonSupport{
 
   case class WebResponse[T](status: String, message: Option[String], payload: Option[T])
 
-  case class IdRequest(id: Int)
-
   case class AddTaskRequest (task: TaskDescription, listName: String, boardName: String)
 
   case class MoveTaskRequest (taskId: Int, listName: String)
 
   case class TaskDescription (name: String, description: Option[String])
+
+
+  implicit val MoveTaskRequestFormat = jsonFormat2(MoveTaskRequest)
+  implicit val TaskDescriptionFormat = jsonFormat2(TaskDescription)
+  implicit val EnvelopedTaskRequestFormat = jsonFormat3(WebResponse[AddTaskRequest])
+  implicit val EnvelopedTaskDescription = jsonFormat3(WebResponse[TaskDescription])
 
 }

@@ -22,6 +22,8 @@ abstract class WebService
   def getListsOnBoard(boardName: String): Seq[String]
 
   def getTasksOnListInBoard(listName: String, boardName: String): Seq[Int]
+
+  def getTaskById(taskId: Int): TaskDB
 }
 
 class WebServiceImpl (dbs: DataBaseService)
@@ -50,5 +52,9 @@ class WebServiceImpl (dbs: DataBaseService)
   override def getTasksOnListInBoard(listName: String, boardName: String): Seq[Int] = {
     val tasks = dbs.getTasksByList(listName, boardName)
     tasks.map(x => x.id.get)
+  }
+
+  override def getTaskById(taskId: Int) = {
+    dbs.getTaskById(taskId)
   }
 }
