@@ -13,6 +13,11 @@ abstract class WebService
 
   def deleteTask(taskId: Int): Unit
 
+  /**
+    * Перемещает задачу из
+    * @param data request
+    * @return новый id перемещенной задачи
+    */
   def moveTask(data: MoveTaskRequest): Int
 }
 
@@ -27,7 +32,7 @@ class WebServiceImpl (dbs: DataBaseService)
   }
 
   override def deleteTask(taskId: Int): Unit = {
-
+    dbs.deleteTask(taskId)
   }
 
   override def moveTask(data: MoveTaskRequest): Int = ???
