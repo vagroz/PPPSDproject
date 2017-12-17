@@ -11,7 +11,7 @@ trait WebProtocol extends SprayJsonSupport{
     val Error = "Error"
   }
 
-  case class WebResponse[T](status: String, message: Some[String], payload: Some[T])
+  case class WebResponse[T](status: String, message: Option[String], payload: Option[T])
 
   case class IdRequest(id: Int)
 
