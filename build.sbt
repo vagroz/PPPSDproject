@@ -16,6 +16,7 @@ lazy val pppsdproject = (project in file("."))
 lazy val webserver = project
   .settings(commonSettings)
   .dependsOn(core)
+  .dependsOn(dbservice)
   .settings(libraryDependencies ++= akka)
 
 lazy val dbservice = project
