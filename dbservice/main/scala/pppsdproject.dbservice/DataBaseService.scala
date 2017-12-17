@@ -25,7 +25,8 @@ trait DataBaseService {
     */
   def deleteTask(taskId: Int): Unit
 
+
   def getListsByBoard(boardName: String): Seq[ListDB]
 
-  def getBoards(): Seq[BoardDB]
+
 }
