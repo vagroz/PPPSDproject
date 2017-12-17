@@ -17,7 +17,7 @@ trait WebProtocol extends SprayJsonSupport{
 
   case class AddTaskRequest (task: TaskDescription, listName: String, boardName: String)
 
-  case class MoveTaskRequest (taskId: Int, listName: String, boardName: String)
+  case class MoveTaskRequest (taskId: Int, listName: String)
 
   case class TaskDescription (name: String, description: Option[String])
 

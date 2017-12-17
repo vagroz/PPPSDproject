@@ -14,11 +14,14 @@ abstract class WebService
   def deleteTask(taskId: Int): Unit
 
   /**
-    * Перемещает задачу из
+    * Перемещает задачу внутри борды
     * @param data request
-    * @return новый id перемещенной задачи
     */
-  def moveTask(data: MoveTaskRequest): Int
+  def moveTask(data: MoveTaskRequest): Unit
+
+  def getListsOnBoard(boardName: String): Seq[String]
+
+  def getTasksOnListInBoard(listName: String, boardName: String): Seq[Int]
 }
 
 class WebServiceImpl (dbs: DataBaseService)
@@ -35,5 +38,17 @@ class WebServiceImpl (dbs: DataBaseService)
     dbs.deleteTask(taskId)
   }
 
-  override def moveTask(data: MoveTaskRequest): Int = ???
+  override def moveTask(data: MoveTaskRequest): Unit = {
+    dbs.moveTask(data.taskId, data.listName)
+  }
+
+  override def getListsOnBoard(boardName: String): Seq[String] = {
+    val lists = dbs.getListsByBoard(boardName)
+    lists.map(x => x.name)
+  }
+
+  override def getTasksOnListInBoard(listName: String, boardName: String): Seq[Int] = {
+    val tasks = dbs.getTasksByList(listName, boardName)
+    tasks.map(x => x.id.get)
+  }
 }
