@@ -8,9 +8,15 @@ val commonSettings = Seq(
 
 )
 
+lazy val core = project
+  .settings(commonSettings)
 
 lazy val pppsdproject = (project in file("."))
   .settings(commonSettings)
+
+lazy val dbservice = project
+  .settings(commonSettings)
+  .dependsOn(core)
 
 
 lazy val webserver = project
@@ -19,9 +25,5 @@ lazy val webserver = project
   .dependsOn(dbservice)
   .settings(libraryDependencies ++= akka)
 
-lazy val dbservice = project
-  .settings(commonSettings)
-  .dependsOn(core)
 
-lazy val core = project
-  .settings(commonSettings)
+
