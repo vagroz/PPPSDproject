@@ -28,4 +28,6 @@ trait DataBaseService {
 
   def getListsByBoard(boardName: String): Seq[ListDB]
 
+  def getTasksByList(listName: String, boardName: String): Seq[TaskDB]
+
 }
