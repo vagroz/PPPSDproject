@@ -20,9 +20,13 @@ trait WebProtocol extends SprayJsonSupport{
   case class TaskDescription (name: String, description: Option[String])
 
 
+  implicit val TaskDBFormat = jsonFormat4(TaskDB)
   implicit val MoveTaskRequestFormat = jsonFormat2(MoveTaskRequest)
   implicit val TaskDescriptionFormat = jsonFormat2(TaskDescription)
+  implicit val addTaskRequestFormat = jsonFormat3(AddTaskRequest)
   implicit val EnvelopedTaskRequestFormat = jsonFormat3(WebResponse[AddTaskRequest])
   implicit val EnvelopedTaskDescription = jsonFormat3(WebResponse[TaskDescription])
+  implicit val EnvelopedError = jsonFormat3(WebResponse[Int])
+  implicit val EnvelopedTaskDBFormat = jsonFormat3(WebResponse[TaskDB])
 
 }
