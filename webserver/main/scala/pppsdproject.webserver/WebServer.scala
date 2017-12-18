@@ -56,6 +56,16 @@ object WebServer
           onSuccess(futuResult){
               complete(HttpResponse(204))
           }
+        } ~
+        put {
+          parameters('list.as[String]) { listName =>
+            val moveReq = MoveTaskRequest(id, listName)
+            val futureResult = Future(srv.moveTask(moveReq))
+            onSuccess(futureResult){
+              complete(HttpResponse(204))
+            }
+
+          }
         }
       } ~
       path("task") {
@@ -79,15 +89,6 @@ object WebServer
             onComplete(futureResult){ result =>
               complete(201, result)
             }
-          }
-        } ~
-        put {
-          entity(as[MoveTaskRequest]) { inputData =>
-            val futureResult = Future(srv.moveTask(inputData))
-            onSuccess(futureResult){
-              complete(HttpResponse(204))
-            }
-
           }
         }
       } ~
