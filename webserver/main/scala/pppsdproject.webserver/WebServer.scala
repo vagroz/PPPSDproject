@@ -72,8 +72,17 @@ object WebServer
                 WebResponse(WebStatus.Ok, None, Some(res))
               }
             onComplete(futureResult){ result =>
-              complete(result)
+              complete(201, result)
             }
+          }
+        } ~
+        put {
+          entity(as[MoveTaskRequest]) { inputData =>
+            val futureResult = Future(srv.moveTask(inputData))
+            onSuccess(futureResult){
+              complete(HttpResponse(204))
+            }
+
           }
         }
       }
