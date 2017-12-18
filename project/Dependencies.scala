@@ -11,4 +11,9 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpV,
     "com.typesafe.akka" %% "akka-actor" % akkaV
   )
+
+  def slick = Seq(
+    "com.typesafe.slick" %% "slick"           % "3.2.1",
+    "org.postgresql"      % "postgresql"      % "9.3-1100-jdbc41"
+  )
 }

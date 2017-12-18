@@ -3,6 +3,8 @@ package pppsdproject.dbservice
 import pppsdproject.core.model._
 import pppsdproject.dbservice.tables._
 
+import slick.jdbc.PostgresProfile.api._
+
 import scala.concurrent.Await
 
 

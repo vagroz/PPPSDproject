@@ -3,6 +3,8 @@ import pppsdproject.dbservice.tables._
 import scala.concurrent.duration._
 import scala.concurrent.Await
 
+import slick.jdbc.PostgresProfile.api._
+
 object DataBaseCreateSchema {
   lazy val boards = TableQuery[BoardTable]
   lazy val lists = TableQuery[ListTable]
@@ -14,7 +16,7 @@ object DataBaseCreateSchema {
     Await.result(db.run(action), 2.seconds)
 
   def createEmptyTables = {
-    val schema = boards.schema ++ lists.schema ++ tasks.query
+    val schema = boards.schema ++ lists.schema ++ tasks.schema
 //    create tables
     exec(schema.create)
   }
