@@ -9,6 +9,7 @@ import akka.stream.ActorMaterializer
 
 import scala.io.StdIn
 import pppsdproject.dbservice.FakeDb
+import pppsdproject.core.exceptions._
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -28,8 +29,12 @@ object WebServer
     implicit val executionContext = system.dispatcher
 
     implicit def myExceptionHandler: ExceptionHandler = ExceptionHandler {
+      case th @ (TaskNotFountException(_,_) | ListNotFoundException(_,_) | BoardNotFoundException(_,_) )=>
+        complete (404, WebResponse[Int](WebStatus.Error, Some(th.getMessage), None))
+      case th: InternalError =>
+        complete (500, WebResponse[Int](WebStatus.Error, Some(th.getMessage), None))
       case th: Throwable =>
-        complete (422, WebResponse[Int](WebStatus.Error, Some(th.getMessage), None))
+        complete (520, WebResponse[Int](WebStatus.Error, Some(th.getMessage), None)
     }
 
     val route =
@@ -98,9 +103,6 @@ object WebServer
         }
       }
 
-    def failureComplete(th: Throwable) = {
-      WebResponse[Int](WebStatus.Error, Some(th.getMessage), None)
-    }
     val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
 
     println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
