@@ -1,6 +1,7 @@
 package pppsdproject.webserver
 import pppsdproject.core.model._
 import pppsdproject.dbservice._
+import pppsdproject.webserver._
 
 abstract class WebService
   extends WebProtocol {

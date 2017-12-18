@@ -64,6 +64,17 @@ object WebServer
               complete(result)
             }
           }
+        } ~
+        post {
+          entity(as[AddTaskRequest]) { inputData =>
+            val futureResult = Future(srv.addTask(inputData))
+              .map { res =>
+                WebResponse(WebStatus.Ok, None, Some(res))
+              }
+            onComplete(futureResult){ result =>
+              complete(result)
+            }
+          }
         }
       }
 
