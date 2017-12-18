@@ -70,8 +70,8 @@ object WebServer
       } ~
       path("task") {
         get {
-          entity(as[GetTasksInListRequest]) { inputData =>
-            val futureResult = Future(srv.getTasksOnListInBoard(inputData.listName, inputData.boardName))
+          parameters('list.as[String], 'board.as[String]) {(listName, boardName) =>
+            val futureResult = Future(srv.getTasksOnListInBoard(listName, boardName))
               .map { result =>
                 WebResponse(WebStatus.Ok, None, Some(result))
               }
