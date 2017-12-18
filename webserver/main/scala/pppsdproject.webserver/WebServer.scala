@@ -34,7 +34,7 @@ object WebServer
       case th: InternalError =>
         complete (500, WebResponse[Int](WebStatus.Error, Some(th.getMessage), None))
       case th: Throwable =>
-        complete (520, WebResponse[Int](WebStatus.Error, Some(th.getMessage), None)
+        complete (520, WebResponse[Int](WebStatus.Error, Some(th.getMessage), None))
     }
 
     val route =
