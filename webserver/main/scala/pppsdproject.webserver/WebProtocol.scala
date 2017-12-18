@@ -32,5 +32,6 @@ trait WebProtocol extends SprayJsonSupport{
   implicit val EnvelopedError = jsonFormat3(WebResponse[Int])
   implicit val EnvelopedTaskDBFormat = jsonFormat3(WebResponse[TaskDB])
   implicit val EnvelopedSeqInt = jsonFormat3(WebResponse[Seq[Int]])
+  implicit val EnvelopedSeqString = jsonFormat3(WebResponse[Seq[String]])
 
 }

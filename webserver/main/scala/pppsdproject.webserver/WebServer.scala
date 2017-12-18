@@ -35,7 +35,7 @@ object WebServer
     val route =
       path("hello") {
         get {
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-http</h1>"))
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Hello, XXI Century World!!!</h1>"))
         }
       } ~
       path("task" / IntNumber) { id =>
@@ -83,6 +83,17 @@ object WebServer
               complete(HttpResponse(204))
             }
 
+          }
+        }
+      } ~
+      path ("list") {
+        parameters('board.as[String]){ board =>
+          val futureResult = Future(srv.getListsOnBoard(board))
+            .map { res =>
+              WebResponse(WebStatus.Ok, None, Some(res))
+            }
+          onComplete(futureResult){ result =>
+            complete(result)
           }
         }
       }
