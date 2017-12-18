@@ -52,6 +52,19 @@ object WebServer
               complete(HttpResponse(204))
           }
         }
+      } ~
+      path("task") {
+        get {
+          entity(as[GetTasksInListRequest]) { inputData =>
+            val futureResult = Future(srv.getTasksOnListInBoard(inputData.listName, inputData.boardName))
+              .map { result =>
+                WebResponse(WebStatus.Ok, None, Some(result))
+              }
+            onComplete(futureResult){ result =>
+              complete(result)
+            }
+          }
+        }
       }
 
     def failureComplete(th: Throwable) = {
