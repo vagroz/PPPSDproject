@@ -3,7 +3,7 @@ package pppsdproject.webserver
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
-import akka.http.scaladsl.server.Directives
+import akka.http.scaladsl.server.{Directives, ExceptionHandler}
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 
@@ -27,6 +27,11 @@ object WebServer
     implicit val materializer = ActorMaterializer()
     implicit val executionContext = system.dispatcher
 
+    implicit def myExceptionHandler: ExceptionHandler = ExceptionHandler {
+      case th: Throwable =>
+        complete (422, WebResponse[Int](WebStatus.Error, Some(th.getMessage), None))
+    }
+
     val route =
       path("hello") {
         get {
@@ -36,20 +41,14 @@ object WebServer
       path("task" / IntNumber) { id =>
         get {
           val futuResult = Future(srv.getTaskById(id))
-          onComplete(futuResult){
-            case Failure(th) =>
-              complete(422, WebResponse[Int](WebStatus.Error, Some(th.getMessage), None))
-            case Success(task) =>
-              val result = WebResponse(WebStatus.Ok, None, Some(task))
+            .map (task => WebResponse(WebStatus.Ok, None, Some(task)))
+          onComplete(futuResult){ result =>
               complete(result)
           }
         } ~
         delete {
           val futuResult = Future(srv.deleteTask(id))
-          onComplete(futuResult){
-            case Failure(th) =>
-              complete(422, WebResponse[Int](WebStatus.Error, Some(th.getMessage), None))
-            case Success(res) =>
+          onSuccess(futuResult){
               complete(HttpResponse(204))
           }
         }
