@@ -7,7 +7,6 @@ import slick.jdbc.PostgresProfile.api._
 
 import scala.concurrent.Await
 
-
 trait DataBaseService {
 
   /**
