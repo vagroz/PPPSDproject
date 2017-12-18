@@ -21,7 +21,7 @@
 ### REST-API:
 1. `/task/{id}`
 * `GET`: получить задачу по id. Пример ответа:
-    ```json
+    ```
     HTTP/1.1 200 OK
     {"status":"OK","payload":{"id":56,"name":"task56","listId":117}}
     ```
@@ -29,20 +29,43 @@
     ```
     HTTP/1.1 204 No Content
     ```
+    
+* `PUT`, `?list={listName}`: перемещает задачу по id в указанный список.
+Пример ответа:
+    ```
+    HTTP/1.1 204 No Content
+    ```
+ 
 2. `/task`
+* `GET`, `?list={listName} & board={boardName}`: возвращает id задач, прикрепленных к указанному списку на указанной доске. Пример ответа:
+    ```
+    HTTP/1.1 200 OK
+    {"status":"OK","payload":[1117,1118,1119]}
+    ``` 
 * `POST`: добавляет задачу. Принимает на вход *json* с описанием задачи, названиями доски и списка, к которым нужно это задание прикрепить. Пример входных данных:
     ```json
     {
       "task": {
         "name": "TaskName",
-        *"description": "Very important task"
+        "description": "Very important task"
       },
       "listName": "list1",
       "boardName": "board1"
     }
     ```
     В случае успеха возвращается id добавленной задачи. Пример ответа:
-    ```json
+    ```
     HTTP/1.1 201 Created
     {"status":"OK","payload":1117}
+    ```
+3. `/list`
+* `GET`, `?board={boardName}`: возвращает названия списков, прикрепленных к указанной доске. Пример ответа:
+    ```
+    HTTP/1.1 200 OK
+    {"status":"OK","payload":["testList","testList1"]}
+    ```
+4. Обработка исключений. В проекте есть несколько различных кастомных исключений, на каждое выдается Http Response с соответствующим кодом и *json* с описанием ошибки. Например, при запросе несуществующего задания:
+    ```
+    HTTP/1.1 404 Not Found
+    {"status":"Error","message":"Task with id=0 doesn't exist"}
     ```
