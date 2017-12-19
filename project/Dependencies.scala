@@ -9,10 +9,16 @@ object Dependencies {
   def akka = Seq(
     "com.typesafe.akka" %% "akka-http" % akkaHttpV,
     "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpV,
-    "com.typesafe.akka" %% "akka-actor" % akkaV
+    "com.typesafe.akka" %% "akka-actor" % akkaV,
+    "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpV
   )
 
   def configTypesafe = Seq (
     "com.typesafe" % "config" % "1.3.1"
+  )
+
+  def scalaTest = Seq (
+    "org.scalactic" %% "scalactic" % "3.0.4",
+    "org.scalatest" %% "scalatest" % "3.0.4" % "test"
   )
 }
