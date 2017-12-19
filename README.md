@@ -11,7 +11,7 @@
 * [x] Декларация сборки и зависимостей: SBT.
 * [x] Статический анализ стиля кодирования:[scalastyle](http://www.scalastyle.org/sbt.html). Запуск: `sbt scalastyle`.
 * [ ] Непрерывная интеграция.
-* [ ] Юнит-тесты.
+* [x] Юнит-тесты: [scalatest](http://www.scalatest.org/), [Akka HTTP Test Kit](https://doc.akka.io/docs/akka-http/10.0.11/scala/http/routing-dsl/testkit.html) + [sbt-scoverage](https://github.com/scoverage/sbt-scoverage)
 * [ ] Использование реляционной СУБД, причем схема БД должна быть в 3NF (если денормализацию нельзя аргументировать).
 * [x] Веб-интерфейс и/или RPC API или REST API.
 * [x] Сервис должен удовлетворять условиям масштабируемости из соответствующей лекции.

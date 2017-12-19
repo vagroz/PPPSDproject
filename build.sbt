@@ -14,6 +14,7 @@ lazy val core = project
 
 lazy val pppsdproject = (project in file("."))
   .settings(commonSettings)
+  .settings(coverageEnabled in test := true)
   .settings(mainClass in assembly := Some("pppsdproject.Main"))
   .settings(assemblyJarName in assembly := "pppsdproject.jar")
   .dependsOn(core, dbservice, webserver)
