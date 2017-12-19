@@ -117,4 +117,8 @@ with WebProtocol {
           }
         }
       }
+
+  def getRoute() = {
+    route
+  }
 }
