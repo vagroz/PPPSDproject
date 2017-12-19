@@ -4,11 +4,11 @@ import pppsdproject.core.model._
 import slick.jdbc.PostgresProfile.api._
 
 package object tables {
-  case class BoardTable(tag: Tag) extends TableBoardDB](tag, "BOARD") {
+  case class BoardTable(tag: Tag) extends Table[BoardDB](tag, "BOARD") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name")
 
-    def * = (id, name, listId, description).mapTo[TaskDB]
+    def * = (id, name).mapTo[BoardDB]
   }
 
   lazy val boards = TableQuery[BoardTable]
@@ -18,9 +18,9 @@ package object tables {
     def name = column[String]("name")
     def boardId = column[Int]("boardId")
 
-    def * = (id, name, listId, description).mapTo[TaskDB]
+    def * = (id, name, boardId).mapTo[ListDB]
 
-    def board = foreignKey("board_fK", boardId, boards)(._id, onDelete=ForeignKeyAction.NoAction, onUpdate=ForeignKeyAction.Cascade)
+    def board = foreignKey("board_fK", boardId, boards)(_.id, onDelete=ForeignKeyAction.NoAction, onUpdate=ForeignKeyAction.Cascade)
   }
 
   lazy val lists = TableQuery[ListTable]
@@ -33,7 +33,7 @@ package object tables {
 
     def * = (id, name, listId, description).mapTo[TaskDB]
 
-    def list = foreignKey("list_fK", listId, lists)(._id, onDelete=ForeignKeyAction.Restrict, onUpdate=ForeignKeyAction.Cascade)
+    def list = foreignKey("list_fK", listId, lists)(_.id, onDelete=ForeignKeyAction.Restrict, onUpdate=ForeignKeyAction.Cascade)
   }
 
   lazy val tasks = TableQuery[TaskTable]

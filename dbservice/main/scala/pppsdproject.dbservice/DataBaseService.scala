@@ -2,10 +2,12 @@ package pppsdproject.dbservice
 
 import pppsdproject.core.model._
 import pppsdproject.dbservice.tables._
+import pppsdproject.core.exceptions._
 
 import slick.jdbc.PostgresProfile.api._
 
 import scala.concurrent.Await
+import scala.concurrent.duration._
 
 trait DataBaseService {
 
@@ -74,46 +76,46 @@ class DataBaseServiceImpl extends DataBaseService {
 
   override def getListByBoard(listName: String, boardName: String): ListDB = {
     val listSeq = exec(
-      for {
-        (l, b) <- lists.filter(_.name === listName) join boards.filter(_.name === boardName)
-          on (_.boardId = _.id)
-      } yield (l)
+      (for {
+        l <- lists.filter(_.name === listName)
+        b <- boards.filter(_.name === boardName) if l.boardId === b.id
+      } yield (l)).result
     )
     if (listSeq.size > 0) {
       return listSeq(0)
     } else {
-      throw new NotFoundInDatabase("Error in getListByBoard: no such list in db")
+      throw new NotFoundInDatabase("Error in getListByBoard: no such list in db", null)
     }
   }
 
   override def addTask(task: TaskDB): TaskDB = {
     val taskSeq = exec(
-      tasks ++= task
-      andThen tasks.filter(t => t.name === task.name && t.listId === task.listId).sortBy(_.id.desc)
+      (tasks ++= Seq(task)) andThen
+      tasks.filter(t => t.name === task.name && t.listId === task.listId).sortBy(_.id.desc).result
     )
     if (taskSeq.size > 0) {
       return taskSeq(0)
     } else {
-      throw new NotFoundInDatabase("Error in addTask: Something wrong with adding")
+      throw new NotFoundInDatabase("Error in addTask: Something wrong with adding", null)
     }
   }
 
   override def deleteTask(taskId: Int): Unit = {
-    let taskSeq = exec(tasks.filter(_.id === taskId).result
+    val taskSeq = exec(tasks.filter(_.id === taskId).result
     )
     if (taskSeq.size > 0) {
       exec(tasks.filter(_.id === taskId).delete)
     } else {
-      throw new NotFoundInDatabase("Error in deleteTask: No such task in db")
+      throw new NotFoundInDatabase("Error in deleteTask: No such task in db", null)
     }
   }
 
   override def getListsByBoard(boardName: String): Seq[ListDB] = {
     return exec(
-      for {
-        (l, b) <- lists.filter(_.name === listName) join boards.filter(_.name === boardName)
-        on (_.boardId = _.id)
-      } yield (l)
+      (for {
+        l <- lists
+        b <- boards.filter(_.name === boardName) if l.boardId === b.id
+      } yield (l)).result
     )
   }
 
@@ -129,7 +131,7 @@ class DataBaseServiceImpl extends DataBaseService {
   }
 
   override def getTaskById (taskId: Int): TaskDB = {
-    return exec(tasks.filter(_.id === taskId))
+    return exec(tasks.filter(_.id === taskId).result)(0)
   }
 
   override def moveTask (taskId: Int, listName: String): Unit = {
@@ -145,7 +147,7 @@ class DataBaseServiceImpl extends DataBaseService {
     if (listIdSeq.size > 0) {
       exec(tasks.filter(_.id === taskId).map(_.listId).update(listIdSeq(0)))
     } else {
-      throw new NotFoundInDatabase("Error in deleteTask: No such task in db")
+      throw new NotFoundInDatabase("Error in deleteTask: No such task in db", null)
     }
   }
 }
