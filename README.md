@@ -25,8 +25,10 @@ sbt assembly
 ```
 Полученный архив лежит в `target/scala-2.12/pppsdproject.jar`. Запуск:
 ```
-java -jar pppsdproject.jar [OPTION]
+java -jar [CONFIGS] pppsdproject.jar [-t]
 ```
+* ключ `-t` запускает сервер в тестовом режиме, без реальной БД (сервис которой пока что еще разрабатывается)
+* переменные *Java*-среды, например `-Dwebservice.endpoint=127.0.0.2` и `-Dwebservice.port=8085`, переопредеяют конфигурационные значения по умолчанию, заданные в файле `src/main/resources/application.conf`
 
 ### REST-API:
 1. `/task/{id}`
