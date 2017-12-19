@@ -13,7 +13,10 @@ lazy val core = project
 
 lazy val pppsdproject = (project in file("."))
   .settings(commonSettings)
-  //.settings(mainClass in assembly := Some("ppsdproject.Main"))
+  .settings(mainClass in assembly := Some("pppsdproject.Main"))
+  .settings(assemblyJarName in assembly := "pppsdproject.jar")
+  .dependsOn(core, dbservice, webserver)
+  .aggregate(core, dbservice, webserver)
 
 lazy val dbservice = project
   .settings(commonSettings)
