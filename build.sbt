@@ -6,7 +6,8 @@ val commonSettings = Seq(
   version := "0.1",
   scalaVersion := "2.12.4",
   libraryDependencies ++= configTypesafe,
-  libraryDependencies ++= scalaTest
+  libraryDependencies ++= scalaTest,
+  coverageEnabled in test := true
 )
 
 lazy val core = project
@@ -14,7 +15,6 @@ lazy val core = project
 
 lazy val pppsdproject = (project in file("."))
   .settings(commonSettings)
-  .settings(coverageEnabled in test := true)
   .settings(mainClass in assembly := Some("pppsdproject.Main"))
   .settings(assemblyJarName in assembly := "pppsdproject.jar")
   .dependsOn(core, dbservice, webserver)
@@ -24,12 +24,12 @@ lazy val dbservice = project
   .settings(commonSettings)
   .dependsOn(core)
 
-
 lazy val webserver = project
   .settings(commonSettings)
   .dependsOn(core)
   .dependsOn(dbservice)
   .settings(libraryDependencies ++= akka)
+
 
 
 
