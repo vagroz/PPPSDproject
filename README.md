@@ -1,5 +1,5 @@
 # PPPSDproject
-[![webserver_build_status](https://travis-ci.org/vagroz/PPPSDproject.svg?branch=webservice)
+[![webserver_build_status](https://travis-ci.org/vagroz/PPPSDproject.svg?branch=webservice)](https://travis-ci.org/vagroz/PPPSDproject)
 
 Веб-сервер и база данных, реализующие функционал [Trello](http://trello.com). Так как за сутки мало что можно успеть, имеются только три сущности:
 * *Task* (id, name, description, listId) --- задание, которое прикрепляется к списку. Его можно создавать, удалять, смотреть по id и перемещать между листами.
