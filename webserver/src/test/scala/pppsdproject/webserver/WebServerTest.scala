@@ -55,4 +55,10 @@ class WebServerTest
     }
   }
 
+  it should "return lists on board" in {
+    Get("/list?board=board1") ~> route ~> check {
+      entityAs[WebResponse[Seq[String]]].payload.get should contain only("testList", "testList1")
+    }
+  }
+
 }
