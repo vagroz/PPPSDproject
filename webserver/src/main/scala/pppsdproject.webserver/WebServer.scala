@@ -16,18 +16,21 @@ import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 object WebServer
-  extends Directives
-    with WebProtocol {
+extends Directives
+with WebProtocol {
+  implicit val system = ActorSystem("pppsdproject")
+  implicit val materializer = ActorMaterializer()
+  implicit val executionContext = system.dispatcher
 
   def main(args: Array[String]): Unit = {
     val webservice = new WebServiceImpl(new FakeDb)
     runWithService(webservice)
   }
 
-  def runWithService (srv: WebService) {
-    implicit val system = ActorSystem("pppsdproject")
-    implicit val materializer = ActorMaterializer()
-    implicit val executionContext = system.dispatcher
+  private var srv: WebService = new WebServiceImpl(new FakeDb)
+
+  def runWithService (service: WebService) {
+    srv = service
 
     implicit def myExceptionHandler: ExceptionHandler = ExceptionHandler {
       case th @ (TaskNotFountException(_,_) | ListNotFoundException(_,_) | BoardNotFoundException(_,_) )=>
@@ -38,36 +41,46 @@ object WebServer
         complete (520, WebResponse[Int](WebStatus.Error, Some(th.getMessage), None))
     }
 
-    val route =
-      path("hello") {
-        get {
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Hello, XXI Century World!!!</h1>"))
-        }
-      } ~
+    val webconf = Config.loadWebserviceConfig()
+    val bindingFuture = Http().bindAndHandle(route, webconf.endpoint, webconf.port)
+
+    println(s"Server online at http://${webconf.endpoint}:${webconf.port}/\nPress RETURN to stop...")
+    StdIn.readLine() // let it run until user presses return
+    bindingFuture
+      .flatMap(_.unbind()) // trigger unbinding from the port
+      .onComplete(_ => system.terminate()) // and shutdown when done
+  }
+
+  val route =
+    path("hello") {
+      get {
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Hello, XXI Century World!!!</h1>"))
+      }
+    } ~
       path("task" / IntNumber) { id =>
         get {
           val futuResult = Future(srv.getTaskById(id))
             .map (task => WebResponse(WebStatus.Ok, None, Some(task)))
           onComplete(futuResult){ result =>
-              complete(result)
+            complete(result)
           }
         } ~
-        delete {
-          val futuResult = Future(srv.deleteTask(id))
-          onSuccess(futuResult){
-              complete(HttpResponse(204))
-          }
-        } ~
-        put {
-          parameters('list.as[String]) { listName =>
-            val moveReq = MoveTaskRequest(id, listName)
-            val futureResult = Future(srv.moveTask(moveReq))
-            onSuccess(futureResult){
+          delete {
+            val futuResult = Future(srv.deleteTask(id))
+            onSuccess(futuResult){
               complete(HttpResponse(204))
             }
+          } ~
+          put {
+            parameters('list.as[String]) { listName =>
+              val moveReq = MoveTaskRequest(id, listName)
+              val futureResult = Future(srv.moveTask(moveReq))
+              onSuccess(futureResult){
+                complete(HttpResponse(204))
+              }
 
+            }
           }
-        }
       } ~
       path("task") {
         get {
@@ -81,17 +94,17 @@ object WebServer
             }
           }
         } ~
-        post {
-          entity(as[AddTaskRequest]) { inputData =>
-            val futureResult = Future(srv.addTask(inputData))
-              .map { res =>
-                WebResponse(WebStatus.Ok, None, Some(res))
+          post {
+            entity(as[AddTaskRequest]) { inputData =>
+              val futureResult = Future(srv.addTask(inputData))
+                .map { res =>
+                  WebResponse(WebStatus.Ok, None, Some(res))
+                }
+              onComplete(futureResult){ result =>
+                complete(201, result)
               }
-            onComplete(futureResult){ result =>
-              complete(201, result)
             }
           }
-        }
       } ~
       path ("list") {
         parameters('board.as[String]){ board =>
@@ -104,14 +117,4 @@ object WebServer
           }
         }
       }
-
-    val webconf = Config.loadWebserviceConfig()
-    val bindingFuture = Http().bindAndHandle(route, webconf.endpoint, webconf.port)
-
-    println(s"Server online at http://${webconf.endpoint}:${webconf.port}/\nPress RETURN to stop...")
-    StdIn.readLine() // let it run until user presses return
-    bindingFuture
-      .flatMap(_.unbind()) // trigger unbinding from the port
-      .onComplete(_ => system.terminate()) // and shutdown when done
-  }
 }
