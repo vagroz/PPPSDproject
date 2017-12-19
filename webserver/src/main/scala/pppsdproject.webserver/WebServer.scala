@@ -10,6 +10,7 @@ import akka.stream.ActorMaterializer
 import scala.io.StdIn
 import pppsdproject.dbservice.FakeDb
 import pppsdproject.core.exceptions._
+import pppsdproject.core.Config
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -104,9 +105,10 @@ object WebServer
         }
       }
 
-    val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
+    val webconf = Config.loadWebserviceConfig()
+    val bindingFuture = Http().bindAndHandle(route, webconf.endpoint, webconf.port)
 
-    println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
+    println(s"Server online at http://${webconf.endpoint}:${webconf.port}/\nPress RETURN to stop...")
     StdIn.readLine() // let it run until user presses return
     bindingFuture
       .flatMap(_.unbind()) // trigger unbinding from the port

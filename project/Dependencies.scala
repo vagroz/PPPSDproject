@@ -11,4 +11,8 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpV,
     "com.typesafe.akka" %% "akka-actor" % akkaV
   )
+
+  def configTypesafe = Seq (
+    "com.typesafe" % "config" % "1.3.1"
+  )
 }
