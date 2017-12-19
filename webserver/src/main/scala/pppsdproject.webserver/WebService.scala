@@ -32,7 +32,7 @@ class WebServiceImpl (dbs: DataBaseService)
 
   override def addTask(data: AddTaskRequest): Int = {
     val listId = dbs.getListByBoard(data.listName, data.boardName).id
-    val task = TaskDB(None, data.task.name, listId, data.task.description)
+    val task = TaskDB(None, data.task.name, listId.get, data.task.description)
     val addedTask = dbs.addTask(task)
     addedTask.id.get
   }

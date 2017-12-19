@@ -4,7 +4,8 @@ name := "PPPSDproject"
 
 val commonSettings = Seq(
   version := "0.1",
-  scalaVersion := "2.12.4"
+  scalaVersion := "2.12.4",
+  libraryDependencies ++= configTypesafe
 
 )
 
@@ -13,6 +14,10 @@ lazy val core = project
 
 lazy val pppsdproject = (project in file("."))
   .settings(commonSettings)
+  .settings(mainClass in assembly := Some("pppsdproject.Main"))
+  .settings(assemblyJarName in assembly := "pppsdproject.jar")
+  .dependsOn(core, dbservice, webserver)
+  .aggregate(core, dbservice, webserver)
 
 lazy val dbservice = project
   .settings(commonSettings)

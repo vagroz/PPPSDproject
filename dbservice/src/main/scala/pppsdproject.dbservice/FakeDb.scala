@@ -6,7 +6,7 @@ class FakeDb
   extends DataBaseService {
 
   override def getListByBoard(listName: String, boardName: String): model.ListDB = {
-    model.ListDB(117, "testList", 117)
+    model.ListDB(Some(117), "testList", 117)
   }
 
 
@@ -22,10 +22,10 @@ class FakeDb
 
   override def getListsByBoard(boardName: String): Seq[model.ListDB] = {
     if (boardName.toUpperCase() == "NONE")
-      throw new BoardNotFoundException(s"Board with name=$boardName doesn't exist", null)
+      throw BoardNotFoundException(s"Board with name=$boardName doesn't exist", null)
     Seq (
-      model.ListDB(117, "testList", 117),
-      model.ListDB(118, "testList1", 117)
+      model.ListDB(Some(117), "testList", 117),
+      model.ListDB(Some(118), "testList1", 117)
     )
   }
 
