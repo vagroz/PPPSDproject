@@ -13,6 +13,7 @@ lazy val core = project
 
 lazy val pppsdproject = (project in file("."))
   .settings(commonSettings)
+  //.settings(mainClass in assembly := Some("ppsdproject.Main"))
 
 lazy val dbservice = project
   .settings(commonSettings)

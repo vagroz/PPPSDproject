@@ -22,7 +22,7 @@ class FakeDb
 
   override def getListsByBoard(boardName: String): Seq[model.ListDB] = {
     if (boardName.toUpperCase() == "NONE")
-      throw new BoardNotFoundException(s"Board with name=$boardName doesn't exist", null)
+      throw BoardNotFoundException(s"Board with name=$boardName doesn't exist", null)
     Seq (
       model.ListDB(Some(117), "testList", 117),
       model.ListDB(Some(118), "testList1", 117)
