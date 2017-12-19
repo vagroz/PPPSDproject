@@ -3,7 +3,6 @@ package pppsdproject.webserver
 import org.scalatest.{FlatSpec, Matchers}
 import pppsdproject.core.exceptions._
 import pppsdproject.core.model._
-import Matchers._
 import pppsdproject.dbservice.FakeDb
 
 class WebServiceTest
@@ -24,8 +23,23 @@ class WebServiceTest
     an [InternalError] should be thrownBy wbs.addTask(request)
   }
 
+  it should "return lists on board" in {
+    wbs.getListsOnBoard("board1") should contain("testList")
+  }
 
+  it should "throw BoardNotFoundException" in {
+    val exception = the [BoardNotFoundException] thrownBy wbs.getListsOnBoard("NoNe")
+    exception.getMessage shouldBe "Board with name=NoNe doesn't exist"
+  }
 
+  it should "return task id by list and board" in {
+    wbs.getTasksOnListInBoard("list1", "board1") should contain only(1117, 1118, 1119)
+  }
+
+  it should "return existing task by Id" in {
+    wbs.getTaskById(1199).id shouldBe Some(1199)
+    a [TaskNotFountException] should be thrownBy wbs.getTaskById(0)
+  }
 
 
 }
