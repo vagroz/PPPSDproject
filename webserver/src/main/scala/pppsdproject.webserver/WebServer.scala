@@ -30,7 +30,7 @@ object WebServer
     implicit val executionContext = system.dispatcher
 
     implicit def myExceptionHandler: ExceptionHandler = ExceptionHandler {
-      case th @ (TaskNotFountException(_,_) | ListNotFoundException(_,_) | BoardNotFoundException(_,_) )=>
+      case th @ (TaskNotFoundException(_,_) | ListNotFoundException(_,_) | BoardNotFoundException(_,_) )=>
         complete (404, WebResponse[Int](WebStatus.Error, Some(th.getMessage), None))
       case th: InternalError =>
         complete (500, WebResponse[Int](WebStatus.Error, Some(th.getMessage), None))

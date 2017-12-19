@@ -15,4 +15,11 @@ object Dependencies {
   def configTypesafe = Seq (
     "com.typesafe" % "config" % "1.3.1"
   )
+
+
+  def slick = Seq(
+    "com.typesafe.slick" %% "slick" % "3.2.1",
+    "org.xerial" % "sqlite-jdbc" % "3.7.15-M1"
+
+  )
 }

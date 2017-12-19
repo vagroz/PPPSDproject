@@ -22,7 +22,7 @@ lazy val pppsdproject = (project in file("."))
 lazy val dbservice = project
   .settings(commonSettings)
   .dependsOn(core)
-
+  .settings(libraryDependencies ++= slick)
 
 lazy val webserver = project
   .settings(commonSettings)
