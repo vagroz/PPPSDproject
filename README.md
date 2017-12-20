@@ -1,6 +1,5 @@
 # PPPSDproject
 [![webserver_build_status](https://travis-ci.org/vagroz/PPPSDproject.svg?branch=result)](https://travis-ci.org/vagroz/PPPSDproject)
-
 [![codecov](https://codecov.io/gh/vagroz/PPPSDproject/branch/result/graph/badge.svg)](https://codecov.io/gh/vagroz/PPPSDproject)
 
 
