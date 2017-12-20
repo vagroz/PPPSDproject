@@ -29,6 +29,7 @@ with WebProtocol {
 
   private var srv: WebService = new WebServiceImpl(new FakeDb)
 
+
   def runWithService (service: WebService) {
     srv = service
     val webconf = Config.loadWebserviceConfig()
