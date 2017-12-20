@@ -6,7 +6,7 @@ import pppsdproject.dbservice._
 object Main extends App {
   if (args.length == 0) {
     val dbService = new DataBaseServiceImpl
-    dbService.clearTables()
+    dbService.createDb()
     val webService = new WebServiceImpl(dbService)
     WebServer.runWithService(webService)
   }else if (args.toSet.contains("-t")){
