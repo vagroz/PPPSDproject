@@ -18,7 +18,7 @@
 * [x] Непрерывная интеграция: [Travis](https://travis-ci.org/vagroz/PPPSDproject) на ветке **webserver**
 * [x] Юнит-тесты: [scalatest](http://www.scalatest.org/), [Akka HTTP Test Kit](https://doc.akka.io/docs/akka-http/10.0.11/scala/http/routing-dsl/testkit.html) + [sbt-scoverage](https://github.com/scoverage/sbt-scoverage) + отчеты 
 по ветке **webserver** из CI заливаются на [Codecove](https://codecov.io/gh/vagroz/PPPSDproject/branch/webservice)
-* [ ] Использование реляционной СУБД, причем схема БД должна быть в 3NF (если денормализацию нельзя аргументировать).
+* [x] Использование реляционной СУБД, причем схема БД должна быть в 3NF (если денормализацию нельзя аргументировать).
 * [x] Веб-интерфейс и/или RPC API или REST API.
 * [x] Сервис должен удовлетворять условиям масштабируемости из соответствующей лекции.
 * [x] Реализована модель некоторой предметной области.
@@ -33,7 +33,7 @@ sbt assembly
 ```
 java -jar [CONFIGS] pppsdproject.jar [-t]
 ```
-* ключ `-t` запускает сервер в тестовом режиме, без реальной БД (сервис которой пока что еще разрабатывается)
+* ключ `-t` запускает сервер в тестовом режиме, без реальной БД.
 * переменные *Java*-среды, например `-Dwebservice.endpoint=127.0.0.2` и `-Dwebservice.port=8085`, переопредеяют конфигурационные значения по умолчанию, заданные в файле `src/main/resources/application.conf`
 
 ### REST-API:
