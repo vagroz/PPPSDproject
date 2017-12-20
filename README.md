@@ -1,4 +1,9 @@
 # PPPSDproject
+[![webserver_build_status](https://travis-ci.org/vagroz/PPPSDproject.svg?branch=result)](https://travis-ci.org/vagroz/PPPSDproject)
+[![codecov](https://codecov.io/gh/vagroz/PPPSDproject/branch/result/graph/badge.svg)](https://codecov.io/gh/vagroz/PPPSDproject)
+
+
+
 Веб-сервер и база данных, реализующие функционал [Trello](http://trello.com). Так как за сутки мало что можно успеть, имеются только три сущности:
 * *Task* (id, name, description, listId) --- задание, которое прикрепляется к списку. Его можно создавать, удалять, смотреть по id и перемещать между листами.
 * *List* (id, name, boardId) --- список, к которому прикрепляются задания. Каждый список прикреплен к доске. В данной  версии проекта можно только посмотреть существующие списки по названию доски.
@@ -10,9 +15,10 @@
 * [x] Лицензия.
 * [x] Декларация сборки и зависимостей: SBT.
 * [x] Статический анализ стиля кодирования:[scalastyle](http://www.scalastyle.org/sbt.html). Запуск: `sbt scalastyle`.
-* [ ] Непрерывная интеграция.
-* [ ] Юнит-тесты.
-* [ ] Использование реляционной СУБД, причем схема БД должна быть в 3NF (если денормализацию нельзя аргументировать).
+* [x] Непрерывная интеграция: [Travis](https://travis-ci.org/vagroz/PPPSDproject) на ветке **webserver**
+* [x] Юнит-тесты: [scalatest](http://www.scalatest.org/), [Akka HTTP Test Kit](https://doc.akka.io/docs/akka-http/10.0.11/scala/http/routing-dsl/testkit.html) + [sbt-scoverage](https://github.com/scoverage/sbt-scoverage) + отчеты 
+по ветке **webserver** из CI заливаются на [Codecove](https://codecov.io/gh/vagroz/PPPSDproject/branch/webservice)
+* [x] Использование реляционной СУБД, причем схема БД должна быть в 3NF (если денормализацию нельзя аргументировать).
 * [x] Веб-интерфейс и/или RPC API или REST API.
 * [x] Сервис должен удовлетворять условиям масштабируемости из соответствующей лекции.
 * [x] Реализована модель некоторой предметной области.
@@ -27,7 +33,7 @@ sbt assembly
 ```
 java -jar [CONFIGS] pppsdproject.jar [-t]
 ```
-* ключ `-t` запускает сервер в тестовом режиме, без реальной БД (сервис которой пока что еще разрабатывается)
+* ключ `-t` запускает сервер в тестовом режиме, без реальной БД.
 * переменные *Java*-среды, например `-Dwebservice.endpoint=127.0.0.2` и `-Dwebservice.port=8085`, переопредеяют конфигурационные значения по умолчанию, заданные в файле `src/main/resources/application.conf`
 
 ### REST-API:
@@ -41,19 +47,19 @@ java -jar [CONFIGS] pppsdproject.jar [-t]
     ```
     HTTP/1.1 204 No Content
     ```
-    
+
 * `PUT`, `?list={listName}`: перемещает задачу по id в указанный список.
 Пример ответа:
     ```
     HTTP/1.1 204 No Content
     ```
- 
+
 2. `/task`
 * `GET`, `?list={listName} & board={boardName}`: возвращает id задач, прикрепленных к указанному списку на указанной доске. Пример ответа:
     ```
     HTTP/1.1 200 OK
     {"status":"OK","payload":[1117,1118,1119]}
-    ``` 
+    ```
 * `POST`: добавляет задачу. Принимает на вход *json* с описанием задачи, названиями доски и списка, к которым нужно это задание прикрепить. Пример входных данных:
     ```json
     {
@@ -81,3 +87,8 @@ java -jar [CONFIGS] pppsdproject.jar [-t]
     HTTP/1.1 404 Not Found
     {"status":"Error","message":"Task with id=0 doesn't exist"}
     ```
+
+### Использование СУБД
+В итоге выбрана БД SQLite. Для работы с БД используется сторонняя библиотека, которая поддерживает и другие реляционные СУБД, поэтому переход делается сменой конфигов и зависимостей.
+Таблицы описаны выше. Для демонстрации при первом запуске создаются пустые таблицы и заполняется доска (1, "InitialBoard"), в которой находятся списки (1, "BackLog", 1), (2, "In progress", 1), (3, "Testing", 1), (4, "Ready", 1), (5, "Release 1.0", 1).
+Все id - primary key, автоинкрементируются. Также объявлены и foreign key с каскадным изменением.

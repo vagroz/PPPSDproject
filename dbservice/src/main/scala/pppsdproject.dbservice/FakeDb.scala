@@ -39,7 +39,7 @@ class FakeDb
 
   override def getTaskById(taskId: Int): model.TaskDB = {
     if (taskId == 0)
-      throw TaskNotFountException(s"Task with id=$taskId doesn't exist", null)
+      throw TaskNotFoundException(s"Task with id=$taskId doesn't exist", null)
     model.TaskDB(Some(taskId), s"task$taskId", 117, None)
   }
 
