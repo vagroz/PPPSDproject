@@ -38,7 +38,7 @@ class WebServiceTest
 
   it should "return existing task by Id" in {
     wbs.getTaskById(1199).id shouldBe Some(1199)
-    a [TaskNotFountException] should be thrownBy wbs.getTaskById(0)
+    a [TaskNotFoundException] should be thrownBy wbs.getTaskById(0)
   }
 
 
