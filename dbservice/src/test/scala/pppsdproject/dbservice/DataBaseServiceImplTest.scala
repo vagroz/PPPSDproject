@@ -3,14 +3,16 @@ package pppsdproject.dbservice
 import java.io.File
 
 import org.scalatest.{FlatSpec, Matchers}
+import pppsdproject.core.Config
 import pppsdproject.core.exceptions._
 import pppsdproject.core.model._
 
 class DataBaseServiceImplTest extends FlatSpec
     with Matchers{
 
+
   val dbs = new DataBaseServiceImpl
-  val dbFile = new File("/pppsdb")
+  val dbFile = new File("./pppsdb")
   if (!dbFile.exists) {
     dbs.createEmptyTables()
   } else {

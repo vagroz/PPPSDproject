@@ -2,6 +2,7 @@ package pppsdproject.dbservice
 
 import pppsdproject.core.exceptions._
 import pppsdproject.core.model._
+import pppsdproject.core.Config
 import pppsdproject.dbservice.tables._
 
 import slick.jdbc.SQLiteProfile.api._
@@ -12,14 +13,8 @@ import scala.concurrent.duration._
 import java.io.File
 
 class DataBaseServiceImpl extends DataBaseService {
-//  def init(configuration: SomeConfigurationThingie) {
-//    val driver = cfg.getOrElse("db.driver", "org.sqlite.JDBC")
-//    val url    = cfg.getOrElse("db.url", "jdbc:sqlite:my.db")
-//    val user   = cfg.getOrElse("db.user", "")
-//    val pw     = cfg.getOrElse("db.password, "")
-//    val db     = Database.forURL(url, driver=driver, user=user, password=pw)
 
-  val db = Database.forURL("jdbc:sqlite:/pppsdb", driver="org.sqlite.JDBC", user="", password="")
+  val db = Database.forURL("jdbc:sqlite:pppsdb", driver="org.sqlite.JDBC", user="", password="")
 
   //  Как вариант - возвращать везде Future и пусть web сторона сама его обрабатывает. Но не сегодня
   //  При select должен возвращаться Seq
@@ -162,7 +157,7 @@ class DataBaseServiceImpl extends DataBaseService {
   }
 
   def createDb(): Unit = {
-    val dbFile = new File("/pppsdb")
+    val dbFile = new File("./pppsdb")
     if (!dbFile.exists) {
       createEmptyTables()
       addInitialQueries()

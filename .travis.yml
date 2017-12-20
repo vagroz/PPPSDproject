@@ -4,8 +4,8 @@ scala: 2.12.4
 
 jdk: oraclejdk8
 
-before_script:
-  - sudo chmod +x /pppsdb
+#before_script:
+#  - sudo chmod +x /pppsdb
 
 script:
   - sbt clean coverage test coverageReport
