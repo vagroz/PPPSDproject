@@ -19,7 +19,8 @@ object Dependencies {
 
   def slick = Seq(
     "com.typesafe.slick" %% "slick" % "3.2.1",
-    "org.xerial" % "sqlite-jdbc" % "3.7.15-M1"
+    "org.xerial" % "sqlite-jdbc" % "3.21.0",
+    "org.slf4j" % "slf4j-simple" % "1.7.12"
 
   )
 }

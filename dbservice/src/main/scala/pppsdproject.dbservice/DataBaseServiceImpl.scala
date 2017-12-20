@@ -1,6 +1,7 @@
+package pppsdproject.dbservice
+
 import pppsdproject.core.exceptions._
 import pppsdproject.core.model._
-import pppsdproject.dbservice.DataBaseService
 import pppsdproject.dbservice.tables._
 
 import slick.jdbc.SQLiteProfile.api._
@@ -9,17 +10,19 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 
 class DataBaseServiceImpl extends DataBaseService {
-  //  надо еще обернуть все функции в try catch
-  lazy val boards = TableQuery[BoardTable]
-  lazy val lists = TableQuery[ListTable]
-  lazy val tasks = TableQuery[TaskTable]
+//  def init(configuration: SomeConfigurationThingie) {
+//    val driver = cfg.getOrElse("db.driver", "org.sqlite.JDBC")
+//    val url    = cfg.getOrElse("db.url", "jdbc:sqlite:my.db")
+//    val user   = cfg.getOrElse("db.user", "")
+//    val pw     = cfg.getOrElse("db.password, "")
+//    val db     = Database.forURL(url, driver=driver, user=user, password=pw)
 
-  val db = Database.forConfig("databaseAdmin")
+  val db = Database.forURL("jdbc:sqlite:D:/sqlite/pppsdb.db", driver="org.sqlite.JDBC", user="", password="")
 
   //  Как вариант - возвращать везде Future и пусть web сторона сама его обрабатывает. Но не сегодня
   //  При select должен возвращаться Seq
   def exec[T](action: DBIO[T]): T =
-    Await.result(db.run(action), 2.seconds)
+    Await.result(db.run(action), 5.seconds)
 
   override def getListByBoard(listName: String, boardName: String): ListDB = {
     val listSeq = exec(
@@ -36,15 +39,8 @@ class DataBaseServiceImpl extends DataBaseService {
   }
 
   override def addTask(task: TaskDB): TaskDB = {
-    val taskSeq = exec(
-      (tasks ++= Seq(task)) andThen
-        tasks.filter(t => t.name === task.name && t.listId === task.listId).sortBy(_.id.desc).result
-    )
-    if (taskSeq.nonEmpty) {
-      taskSeq.head
-    } else {
-      throw TaskNotFoundException("Error in addTask: Something wrong with adding", null)
-    }
+    val newId = exec(tasks returning tasks.map(_.id) ++= Seq(task)).head
+    exec(tasks.filter(_.id === newId).result).head
   }
 
   override def deleteTask(taskId: Int): Unit = {
@@ -67,29 +63,22 @@ class DataBaseServiceImpl extends DataBaseService {
     if (listSeq.nonEmpty) {
       listSeq
     } else {
-      throw ListNotFoundException("Error in deleteTask: No such list in db", null)
+      throw ListNotFoundException("Error in getListsByBoard: No such list in db", null)
     }
   }
 
   override def getTasksByList(listName: String, boardName: String): Seq[TaskDB] = {
-    //    val taskSeq = exec(
-    //      sql"""
-    //        select t.*
-    //        from TASKS t
-    //          inner join LISTS l on t.lisId = l.id
-    //          inner join BOARDS b  on l.boardId = b.id
-    //        where l.name = $listName and b.name = $boardName""".as[Seq[TaskDB]]
     val taskSeq = exec(
       (for {
         t <- tasks
-        l <- lists if t.listId === l.id
-        b <- boards if l.boardId === b.id
+        l <- lists.filter(_.name === listName) if t.listId === l.id
+        b <- boards.filter(_.name === boardName) if l.boardId === b.id
       } yield t).result
     )
     if (taskSeq.nonEmpty) {
       taskSeq
     } else {
-      throw TaskNotFoundException("Error in deleteTask: No such task in db", null)
+      throw TaskNotFoundException("Error in getTasksByList: No such task in db", null)
     }
   }
 
@@ -98,24 +87,34 @@ class DataBaseServiceImpl extends DataBaseService {
     if (taskSeq.nonEmpty) {
       taskSeq.head
     } else {
-      throw TaskNotFoundException("Error in deleteTask: No such list in db", null)
+      throw TaskNotFoundException("Error in getTaskbyId: No such list in db", null)
     }
   }
 
   override def moveTask(taskId: Int, listName: String): Unit = {
-    //    Достаем listId
-    val listIdSeq = exec(
-      sql"""
-        select l.id
-        from TASKS t
-          inner join LISTS l on t.lisId = l.id
-          inner join BOARDS b on l.boardId = b.id
-        where t.id = $taskId and l.name = $listName""".as[Int]
-    )
-    if (listIdSeq.nonEmpty) {
-      exec(tasks.filter(_.id === taskId).map(_.listId).update(listIdSeq(0)))
+    val taskIdSeq = exec(tasks.filter(_.id === taskId).result)
+    if (taskIdSeq.nonEmpty) {
+      //Достаем boardId
+      val boardIdSeq = exec(
+        (for {
+          l <- lists.filter(_.id === taskIdSeq.head.listId)
+          b <- boards if l.boardId === b.id
+        } yield b.id).result
+      )
+      //Достаем listId
+      val listIdSeq = exec(
+        (for {
+          l <- lists.filter(_.name === listName)
+          b <- boards.filter(_.id === boardIdSeq.head) if l.boardId === b.id
+        } yield l.id).result
+      )
+      if (listIdSeq.nonEmpty) {
+        exec(tasks.filter(_.id === taskId).map(_.listId).update(listIdSeq.head))
+      } else {
+        throw ListNotFoundException("Error in moveTask: No such list in db", null)
+      }
     } else {
-      throw ListNotFoundException("Error in deleteTask: No such list in db", null)
+      throw TaskNotFoundException("Error in moveTask: No such task in db", null)
     }
 
   }
@@ -123,7 +122,7 @@ class DataBaseServiceImpl extends DataBaseService {
   def createEmptyTables() : Unit = {
     val schema = boards.schema ++ lists.schema ++ tasks.schema
     //    create tables
-    exec(schema.create)
+    exec(DBIO.seq(schema.create))
   }
 
   def addInitialQueries() : Unit = {
@@ -140,7 +139,7 @@ class DataBaseServiceImpl extends DataBaseService {
       ListDB(None, "In progress", boardId),
       ListDB(None, "Testing", boardId),
       ListDB(None, "Ready", boardId),
-      ListDB(None, "Releaase 1.0", boardId)
+      ListDB(None, "Release 1.0", boardId)
     )
     exec(lists ++= initLists)
   }
