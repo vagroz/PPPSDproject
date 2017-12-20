@@ -1,4 +1,6 @@
 # PPPSDproject
+[![webserver_build_status](https://travis-ci.org/vagroz/PPPSDproject.svg?branch=webservice)](https://travis-ci.org/vagroz/PPPSDproject)
+
 Веб-сервер и база данных, реализующие функционал [Trello](http://trello.com). Так как за сутки мало что можно успеть, имеются только три сущности:
 * *Task* (id, name, description, listId) --- задание, которое прикрепляется к списку. Его можно создавать, удалять, смотреть по id и перемещать между листами.
 * *List* (id, name, boardId) --- список, к которому прикрепляются задания. Каждый список прикреплен к доске. В данной  версии проекта можно только посмотреть существующие списки по названию доски.
@@ -10,8 +12,9 @@
 * [x] Лицензия.
 * [x] Декларация сборки и зависимостей: SBT.
 * [x] Статический анализ стиля кодирования:[scalastyle](http://www.scalastyle.org/sbt.html). Запуск: `sbt scalastyle`.
-* [ ] Непрерывная интеграция.
-* [ ] Юнит-тесты.
+* [x] Непрерывная интеграция: [Travis](https://travis-ci.org/vagroz/PPPSDproject) на ветке **webserver**
+* [x] Юнит-тесты: [scalatest](http://www.scalatest.org/), [Akka HTTP Test Kit](https://doc.akka.io/docs/akka-http/10.0.11/scala/http/routing-dsl/testkit.html) + [sbt-scoverage](https://github.com/scoverage/sbt-scoverage) + отчеты 
+по ветке **webserver** из CI заливаются на [Codecove](https://codecov.io/gh/vagroz/PPPSDproject/branch/webservice)
 * [ ] Использование реляционной СУБД, причем схема БД должна быть в 3NF (если денормализацию нельзя аргументировать).
 * [x] Веб-интерфейс и/или RPC API или REST API.
 * [x] Сервис должен удовлетворять условиям масштабируемости из соответствующей лекции.

@@ -5,8 +5,9 @@ name := "PPPSDproject"
 val commonSettings = Seq(
   version := "0.1",
   scalaVersion := "2.12.4",
-  libraryDependencies ++= configTypesafe
-
+  libraryDependencies ++= configTypesafe,
+  libraryDependencies ++= scalaTest,
+  coverageEnabled in test := true
 )
 
 lazy val core = project
@@ -24,11 +25,13 @@ lazy val dbservice = project
   .dependsOn(core)
   .settings(libraryDependencies ++= slick)
 
+
 lazy val webserver = project
   .settings(commonSettings)
   .dependsOn(core)
   .dependsOn(dbservice)
   .settings(libraryDependencies ++= akka)
+
 
 
 
